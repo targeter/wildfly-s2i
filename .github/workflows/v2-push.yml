@@ -1,4 +1,4 @@
-name: Build and Deploy images (on push to main or wildfly-cekit-modules's events).
+name: Build and Deploy images (on push to main or wildfly-cekit-modules's events). TARGETER
 on:
   repository_dispatch:
     types: [push-in-wf-cekit-modules]
