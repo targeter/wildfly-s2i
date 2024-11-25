@@ -1,4 +1,4 @@
-name: Build and Deploy images (on push to main or wildfly-cekit-modules's events). TARGETER
+name: Build and Deploy images (on push to main or wildfly-cekit-modules's events).
 on:
   repository_dispatch:
     types: [push-in-wf-cekit-modules]
@@ -101,17 +101,6 @@ jobs:
         if: env.IMPACT_IMAGE == 'true' && matrix.jdk == 'jdk21'
         run: |
           echo "WILDFLY_IMAGE_TAGS=latest ${{ env.WILDFLY_IMAGE_TAGS }}" >> $GITHUB_ENV
-      - name: Buildah multi archs Builder Build
-        if: env.IMPACT_IMAGE == 'true'
-        id: build_builder_image
-        uses: redhat-actions/buildah-build@v2.10
-        with:
-          image: ${{ env.WILDFLY_S2I_BUILDER_IMAGE }}
-          tags: ${{ env.WILDFLY_IMAGE_TAGS }}
-          context: ./wildfly-builder-image/target/image
-          platforms: linux/amd64, linux/arm64, linux/ppc64le
-          containerfiles: |
-            ./wildfly-builder-image/target/image/Dockerfile
       - name: Buildah multi archs Runtime Build
         if: env.IMPACT_IMAGE == 'true'
         id: build_runtime_image
@@ -123,16 +112,6 @@ jobs:
           platforms: linux/amd64, linux/arm64, linux/ppc64le
           containerfiles: |
             ./wildfly-runtime-image/target/image/Dockerfile
-      - name: Push Builder Image To Dockerhub
-        if: env.IMPACT_IMAGE == 'true'
-        uses: redhat-actions/push-to-registry@v2.6
-        id: push-builder
-        with:
-          image: ${{ steps.build_builder_image.outputs.image }}
-          tags: ${{ steps.build_builder_image.outputs.tags }}
-          registry: docker.io/${{ env.ORGANIZATION }}
-          username: ${{ secrets.V2_DOCKER_USERNAME }}
-          password: ${{ secrets.V2_DOCKER_PASSWORD }}
       - name: Push Runtime Image To DockerHub
         if: env.IMPACT_IMAGE == 'true'
         uses: redhat-actions/push-to-registry@v2.6
