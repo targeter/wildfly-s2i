@@ -80,17 +80,17 @@ jobs:
           pushd wildfly-builder-image
           WILDFLY_IMAGE_VERSION=$(yq e ".version" ${{ matrix.jdk }}-overrides.yaml)
           if [[ "${WILDFLY_IMAGE_VERSION}" =~ .*-snapshot ]]; then
-              ORGANIZATION=${{ secrets.V2_DOCKER_SNAPSHOT_REPO }}
+              ORGANIZATION=dhlparcel
               DOCKER_IMAGE_VERSION=${WILDFLY_IMAGE_VERSION%-snapshot}
           else
-              ORGANIZATION=${{ secrets.V2_DOCKER_REPO }}
+              ORGANIZATION=dhlparcel
               RELEASED_IMAGES="true"
               DOCKER_IMAGE_VERSION="${WILDFLY_IMAGE_VERSION}"
           fi
           # Compute tags common to all images
           WILDFLY_IMAGE_TAGS="latest-${{ matrix.jdk }} ${DOCKER_IMAGE_VERSION}"
           echo "WILDFLY_IMAGE_TAGS=${WILDFLY_IMAGE_TAGS}" >> $GITHUB_ENV
-          echo "ORGANIZATION=${ORGANIZATION}" >> $GITHUB_ENV
+          echo "ORGANIZATION=dhlparcel" >> $GITHUB_ENV
           echo "DOCKER_IMAGE_VERSION=${DOCKER_IMAGE_VERSION}" >> $GITHUB_ENV
           cekit build --dry-run --overrides=${{ matrix.jdk }}-overrides.yaml docker
           popd
@@ -119,6 +119,6 @@ jobs:
         with:
           image: ${{ steps.build_runtime_image.outputs.image }}
           tags: ${{ steps.build_runtime_image.outputs.tags }}
-          registry: docker.io/${{ env.ORGANIZATION }}
+          registry: docker.io/dhlparcel
           username: ${{ secrets.V2_DOCKER_USERNAME }}
           password: ${{ secrets.V2_DOCKER_PASSWORD }}
