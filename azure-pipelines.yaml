@@ -22,5 +22,5 @@ steps:
   displayName: 'Run cekit'
 
 - script: |
-    cd wildfly-runtime-image
+    cd wildfl-runtime-image
     cekit build --overrides=jdk21-overrides.yaml docker --no-squash --platform linux/amd64
