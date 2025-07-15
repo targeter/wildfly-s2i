@@ -1,0 +1,26 @@
+trigger:
+- main
+
+pool: 'dhl-svdepot-pool'
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.x'
+    addToPath: true
+
+- script: |
+    python -m venv venv
+    source venv/bin/activate
+    pip install --upgrade pip
+    pip install cekit docker docker-squash odcs behave lxml packaging
+  displayName: 'Set up Python venv and install cekit'
+
+- script: |
+    source venv/bin/activate
+    cekit --help
+  displayName: 'Run cekit'
+
+- script: |
+    cd wildfly-runtime-image
+    cekit build --overrides=jdk21-overrides.yaml docker --no-squash --platform linux/amd64
